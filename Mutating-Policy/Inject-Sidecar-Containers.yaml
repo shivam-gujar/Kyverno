@@ -1,0 +1,21 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: inject-logging-sidecar
+spec:
+  rules:
+  - name: add-logging-sidecar
+    match:
+      resources:
+        kinds:
+        - Pod
+    mutate:
+      patchStrategicMerge:
+        spec:
+          containers:
+          - name: logging-sidecar
+            image: logging-image:latest
+            resources:
+              limits:
+                memory: "64Mi"
+                cpu: "250m"
