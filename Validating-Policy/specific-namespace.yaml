@@ -1,0 +1,25 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: prod-strict-policy
+spec:
+  validationFailureAction: Enforce
+  rules:
+  - name: prod-only
+    match:
+      resources:
+        kinds:
+        - Pod
+        namespaces:
+        - prod
+    validate:
+      message: "Production pods must have limits and non-root user"
+      pattern:
+        spec:
+          securityContext:
+            runAsNonRoot: true
+          containers:
+          - resources:
+              limits:
+                cpu: "?*"
+                memory: "?*"
